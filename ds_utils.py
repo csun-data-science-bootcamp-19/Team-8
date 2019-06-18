@@ -29,6 +29,7 @@ from sklearn.metrics import accuracy_score
 from sklearn.utils import shuffle
 from matplotlib import pyplot as plt
 from typing import Callable
+import seaborn as sns
 import copy
 import pandas as pd
 import numpy as np
@@ -102,6 +103,33 @@ def plot_relationship(df: pd.DataFrame, feature1: str, feature2: str) -> None:
     plt.xlabel(feature1, fontsize=20)
     plt.ylabel(feature2, fontsize=20)
     plt.legend()
+    fig = plt.gcf()
+    fig.set_size_inches(8, 8)
+    plt.show()
+
+
+def plot_binary_feature_distribution(df, feature, class_name, is_hist=False):
+    """
+    Plots 2 distributions of a feature: class_name or not class_name
+    This helps us to see where the difference in distributions
+    :param df: pandas DataFrame to
+    :param feature: Which feature to check the distributions of
+    :param class_name: The class we draw an independent distribution of
+    :param is_hist: Plot a histogram or KDE. Default = False
+    """
+    bins = np.linspace(df[feature].min(), df[feature].max(), 30)
+    if is_hist:
+        sns.distplot([df[df[class_name] == 0][feature], df[df[class_name] == 1][feature]], hist=True,
+                     norm_hist=True, kde=False,
+                     bins=bins, color=['blue', 'red'], label=['Not ' + class_name, class_name],
+                     hist_kws={'edgecolor': 'black'})
+    else:
+        sns.kdeplot(df[df['Survived'] == 0][feature], shade=True, color='Blue', label='Not ' + class_name)
+        sns.kdeplot(df[df['Survived'] == 1][feature], shade=True, color='Red', label=class_name)
+    plt.legend(prop={'size': 13}, title=class_name)
+    plt.title('Density Plot of ' + feature, fontsize=15)
+    plt.xlabel(feature, fontsize=20)
+    plt.ylabel('Density', fontsize=20)
     fig = plt.gcf()
     fig.set_size_inches(8, 8)
     plt.show()
