@@ -301,7 +301,7 @@ def adjust_skewness(df: pd.DataFrame) -> pd.DataFrame:
     :return: pandas DataFrame with skew adjusted columns
     """
 
-    numerics = filter(lambda x: x[1].name != 'object' and x[1].name != 'category', zip(df.columns, df.dtypes))
+    numerics = list(x[0] for x in (filter(lambda x: x[1].name != 'object' and x[1].name != 'category', zip(df.columns, df.dtypes))))
     skewed_feats = df[numerics].apply(lambda x: skew(x.dropna())).sort_values(ascending=False)
     skewness = pd.DataFrame({'Skew': skewed_feats})
     skewness = skewness[abs(skewness) > 0.7]
